@@ -1,5 +1,5 @@
 # Define the compiler
-CC = gcc
+CC ?= $(CROSS_COMPILE)gcc
 
 # Define compiler flags
 CFLAGS = -Wall -Wextra
