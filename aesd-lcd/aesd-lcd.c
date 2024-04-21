@@ -9,8 +9,8 @@ Course: AESD
 Date: April 9, 2024
 */
 
-#include <wiringPi.h>
-#include <lcd.h>
+#include "wiringPi.h"
+#include "lcd.h"
 
 #define LCD_RS  25               //Register select pin
 #define LCD_E   24               //Enable Pin
