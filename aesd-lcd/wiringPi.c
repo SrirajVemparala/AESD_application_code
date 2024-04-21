@@ -2258,7 +2258,7 @@ int wiringPiISRStop (int pin) {
  *	fires.
  *********************************************************************************
  */
-
+/*
 static void *interruptHandler (UNU void *arg)
 {
   int pin ;
@@ -2289,7 +2289,7 @@ static void *interruptHandler (UNU void *arg)
   }
   return NULL ;
 }
-
+*/
 
 /*
  * wiringPiISR:
@@ -2327,20 +2327,20 @@ int wiringPiISR (int pin, int mode, void (*function)(void))
   }
   pthread_mutex_lock (&pinMutex) ;
     pinPass = pin ;
-    if (wiringPiDebug) {
-      printf("wiringPi: pthread_create before 0x%lX\n", (unsigned long)isrThreads[pin]);
-    }
-    if (pthread_create (&isrThreads[pin], NULL, interruptHandler, NULL)==0) {
-      if (wiringPiDebug) {
-        printf("wiringPi: pthread_create successed, 0x%lX\n", (unsigned long)isrThreads[pin]);
-      }
-      while (pinPass != -1)
-        delay (1) ;
-    } else {
-      if (wiringPiDebug) {
-        printf("wiringPi: pthread_create failed\n");
-      }
-    }
+    //if (wiringPiDebug) {
+   //   printf("wiringPi: pthread_create before 0x%lX\n", (unsigned long)isrThreads[pin]);
+   // }
+   // if (pthread_create (&isrThreads[pin], NULL, interruptHandler, NULL)==0) {
+   //   if (wiringPiDebug) {
+    //    printf("wiringPi: pthread_create successed, 0x%lX\n", (unsigned long)isrThreads[pin]);
+    //  }
+     // while (pinPass != -1)
+       // delay (1) ;
+    //} else {
+     // if (wiringPiDebug) {
+    //    printf("wiringPi: pthread_create failed\n");
+   //   }
+    //}
 
     if (wiringPiDebug) {
       printf ("wiringPi: mutex out\n") ;

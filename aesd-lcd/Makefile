@@ -5,7 +5,7 @@ CC ?= $(CROSS_COMPILE)gcc
 CFLAGS ?= -g -Wall -Wextra
 
 # Define the libraries to link against
-LIBS ?= -lwiringPi -lwiringPiDev -pthread
+LIBS ?= -pthread
 
 # Define the source file
 SRC = 	aesd-lcd.c \
