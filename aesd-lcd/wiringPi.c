@@ -74,12 +74,8 @@
 #include <sys/utsname.h>
 #include <linux/gpio.h>
 
-#include "softPwm.h"
-#include "softTone.h"
-
 #include "wiringPi.h"
 #include "version.h"
-#include "wiringPiLegacy.h"
 
 // Environment Variables
 
@@ -1047,12 +1043,12 @@ void piBoardId (int *model, int *rev, int *mem, int *maker, int *warranty)
   //piGpioLayoutOops ("this is only a test case");
 
   c = GetPiRevision(line, maxlength,  &revision); // device tree
-  if (NULL==c) {
-    c = GetPiRevisionLegacy(line, maxlength, &revision); // proc/cpuinfo
-  }
-  if (NULL==c) {
-    piGpioLayoutOops ("GetPiRevision failed!") ;
-  }
+ // if (NULL==c) {
+ //   c = GetPiRevisionLegacy(line, maxlength, &revision); // proc/cpuinfo
+ // }
+//  if (NULL==c) {
+//    piGpioLayoutOops ("GetPiRevision failed!") ;
+//  }
 
   if ((revision &  (1 << 23)) != 0)	// New style, not available for Raspberry Pi 1B/A, CM
   {
@@ -1611,8 +1607,8 @@ void pinMode (int pin, int mode)
     if (wiringPiDebug)
       printf ("pinMode: bcm pin:%d mode:%d\n", pin, mode) ;
 
-    softPwmStop  (origPin) ;
-    softToneStop (origPin) ;
+    //softPwmStop  (origPin) ;
+   // softToneStop (origPin) ;
 
     fSel    = gpioToGPFSEL [pin] ;
     shift   = gpioToShift  [pin] ;
@@ -1633,14 +1629,14 @@ void pinMode (int pin, int mode)
       } else {
         *(gpio + fSel) = (*(gpio + fSel) & ~(7 << shift)) | (1 << shift) ;
       }
-    } else if (mode == SOFT_PWM_OUTPUT) {
-      softPwmCreate (origPin, 0, 100) ;
-    } else if (mode == SOFT_TONE_OUTPUT) {
-      softToneCreate (origPin) ;
+    //} else if (mode == SOFT_PWM_OUTPUT) {
+    //  softPwmCreate (origPin, 0, 100) ;
+    //} else if (mode == SOFT_TONE_OUTPUT) {
+    //  softToneCreate (origPin) ;
     } else if (mode == PWM_TONE_OUTPUT)
     {
       pinMode (origPin, PWM_OUTPUT) ;	// Call myself to enable PWM mode
-      pwmSetMode (PWM_MODE_MS) ;
+      //pwmSetMode (PWM_MODE_MS) ;
     }
     else if (mode == PWM_OUTPUT)
     {
@@ -1655,9 +1651,9 @@ void pinMode (int pin, int mode)
       *(gpio + fSel) = (*(gpio + fSel) & ~(7 << shift)) | (alt << shift) ;
       delayMicroseconds (110) ;		// See comments in pwmSetClockWPi
 
-      pwmSetMode  (PWM_MODE_BAL) ;	// Pi default mode
-      pwmSetRange (1024) ;		// Default range of 1024
-      pwmSetClock (32) ;		// 19.2 / 32 = 600KHz - Also starts the PWM
+     // pwmSetMode  (PWM_MODE_BAL) ;	// Pi default mode
+    //  pwmSetRange (1024) ;		// Default range of 1024
+     // pwmSetClock (32) ;		// 19.2 / 32 = 600KHz - Also starts the PWM
     }
     else if (mode == GPIO_CLOCK)
     {
