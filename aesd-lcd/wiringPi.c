@@ -78,7 +78,7 @@
 #include "softTone.h"
 
 #include "wiringPi.h"
-#include "../version.h"
+#include "version.h"
 #include "wiringPiLegacy.h"
 
 // Environment Variables
@@ -535,7 +535,7 @@ const int _5v=-1;
 const int _0v=-1;
 const int _3v=-1;
 
-
+/*
 static int physToSysGPIOPi5 [41] =
 {
    -1,		// 0
@@ -560,7 +560,7 @@ static int physToSysGPIOPi5 [41] =
   425, 419,
   _0v, 420, //39, 40
 } ;
-
+*/
 int GPIOToSysFS(const int pin) {
   int sysfspin =  pin;
   if (RaspberryPiModel<0) { //need to detect pi model
@@ -1776,18 +1776,18 @@ int digitalRead (int pin)
     else if (wiringPiMode != WPI_MODE_GPIO)
       return LOW ;
 
-    if (PI_MODEL_5 == RaspberryPiModel) {
-      switch(gpio[2*pin] & RP1_STATUS_LEVEL_MASK) {
-        default: // 11 or 00 not allowed, give LOW!
-        case RP1_STATUS_LEVEL_LOW:  return LOW ;
-        case RP1_STATUS_LEVEL_HIGH: return HIGH ;
-      }
-    } else {
+ //   if (PI_MODEL_5 == RaspberryPiModel) {
+ //     switch(gpio[2*pin] & RP1_STATUS_LEVEL_MASK) {
+ //       default: // 11 or 00 not allowed, give LOW!
+ //       case RP1_STATUS_LEVEL_LOW:  return LOW ;
+ //       case RP1_STATUS_LEVEL_HIGH: return HIGH ;
+//      }
+  //  } else {
       if ((*(gpio + gpioToGPLEV [pin]) & (1 << (pin & 31))) != 0)
         return HIGH ;
       else
         return LOW ;
-    }
+    //}
   }
   else
   {

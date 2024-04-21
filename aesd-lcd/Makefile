@@ -2,13 +2,18 @@
 CC ?= $(CROSS_COMPILE)gcc
 
 # Define compiler flags
-CFLAGS = -Wall -Wextra
+CFLAGS ?= -g -Wall -Wextra
 
 # Define the libraries to link against
-LIBS = -lwiringPi -lwiringPiDev
+LIBS ?= -lwiringPi -lwiringPiDev -pthread
 
 # Define the source file
-SRC = aesd-lcd.c
+SRC = aesd-lcd.c \
+	lcd.c \
+	wiringPi.c \
+	wiringPiLegacy.c \
+	softTone.c \
+	softPwm.c
 
 # Define the output executable
 TARGET = aesd-lcd
