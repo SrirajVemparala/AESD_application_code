@@ -21,7 +21,7 @@ all: $(TARGET)
 
 # Rule to compile the source file and link against libraries
 $(TARGET): $(SRC)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(TARGET) $(SRC) $(LIBS)
 
 # Clean rule
 clean:
