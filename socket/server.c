@@ -23,6 +23,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <stdbool.h>
+#include "../MLX_code/mlxtest.h"
 
 /***********GLOBAL_VARIBLES*************/
 struct addrinfo hints;
@@ -60,8 +61,9 @@ void thread_rec_data(int *sock_accept_fd)
     while (accepted)
     {   
             /* code */
-           
-            data_sent = send(*sock_accept_fd, "Hello!\n", strlen("Hello!\n"), 0);
+            float temp = get_temp_data();
+            
+            data_sent = send(*sock_accept_fd, &temp, sizeof(float), 0);
             if(data_sent == -1)
             {
                 syslog(LOG_ERR,"Error in sending the data");
@@ -113,6 +115,7 @@ int main(int argc, char* argv[])
   syslog(LOG_ERR, "Cannot handle SIGTERM");
  exit (EXIT_FAILURE);
  }*/
+    i2c_init();
     //length of socket
     socklen_t soclen = sizeof(struct sockaddr);
     //Creation of socket

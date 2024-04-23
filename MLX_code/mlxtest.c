@@ -11,7 +11,7 @@
 #include <linux/i2c.h>
 #include <stddef.h> // Added for size_t
 #include <errno.h>  // Added for errno
-
+#include "mlxtest.h"
 #define I2C_DEV_PATH "/dev/i2c-1"
 
 /* Just in case */
@@ -23,10 +23,11 @@
 #endif
 
 typedef union i2c_smbus_data i2c_data;
+int fdev;
 
-int main()
+int i2c_init()
 {
-    int fdev = open(I2C_DEV_PATH, O_RDWR); // open i2c bus
+    fdev = open(I2C_DEV_PATH, O_RDWR); // open i2c bus
 
     if (fdev < 0) {
         fprintf(stderr, "Failed to open I2C interface %s Error: %s\n", I2C_DEV_PATH, strerror(errno));
@@ -46,11 +47,15 @@ int main()
         fprintf(stderr, "Failed to enable SMBus packet error checking, error: %s\n", strerror(errno));
         return -1;
     }
+    return 0;
 
+}
 
+float get_temp_data()
+{
     // trying to read something from the device using SMBus READ request
     i2c_data data;
-    char command = 0x06; // command 0x06 is reading thermopile sensor, see datasheet for all commands
+    char command = 0x07; // command 0x06 is reading thermopile sensor, see datasheet for all commands
 
     // build request structure
     struct i2c_smbus_ioctl_data sdat = {
@@ -59,8 +64,6 @@ int main()
         .size = I2C_SMBUS_WORD_DATA, // Assuming is defined elsewhere
         .data = &data
     };
-	while(1)
-	{
     // do actual request
     if (ioctl(fdev, I2C_SMBUS, &sdat) < 0) {
         fprintf(stderr, "Failed to perform I2C_SMBUS transaction, error: %s\n", strerror(errno));
@@ -74,6 +77,5 @@ int main()
 
     // print result
     printf("Tamb = %04.2f\n", temp);
-	}
-    return 0;
+    return temp;
 }
