@@ -60,10 +60,11 @@ void thread_rec_data(int *sock_accept_fd)
     int accepted = 1,data_sent;   
     while (accepted)
     {   
+            sleep(2);
             /* code */
-            float temp = get_temp_data();
+            //float temp = get_temp_data();
             
-            data_sent = send(*sock_accept_fd, &temp, sizeof(float), 0);
+            data_sent = send(*sock_accept_fd, "Hello!\n", strlen("Hello!\n"), 0);
             if(data_sent == -1)
             {
                 syslog(LOG_ERR,"Error in sending the data");

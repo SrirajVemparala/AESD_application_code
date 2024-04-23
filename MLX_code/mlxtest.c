@@ -47,6 +47,7 @@ int i2c_init()
         fprintf(stderr, "Failed to enable SMBus packet error checking, error: %s\n", strerror(errno));
         return -1;
     }
+    printf("Init_complete\n");
     return 0;
 
 }
