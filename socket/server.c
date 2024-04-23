@@ -30,7 +30,7 @@ struct addrinfo* servinfo;
 struct sockaddr* socketaddr;
 int sock_fd;
 bool sig_trig = false;
-
+/*
 static void signal_handler(int signo)
 {
     // printf("In_sig_hand\n");
@@ -46,7 +46,7 @@ static void signal_handler(int signo)
     sig_trig = true;//Trigger signal handling for cleanup
     //printf("sigtrig:%d\n",sig_trig);
     //exit(EXIT_SUCCESS);
-}
+}*/
 
 
 /**********DEFINES**********/
@@ -57,7 +57,7 @@ static void signal_handler(int signo)
 void thread_rec_data(int *sock_accept_fd)
 {
     int accepted = 1,data_sent;   
-    while (accepted && !sig_trig)
+    while (accepted)
     {   
             /* code */
            
@@ -99,20 +99,20 @@ int main(int argc, char* argv[])
  * Register signal_handler as our signal handler
  * for SIGINT.
  */
- if (signal (SIGINT, signal_handler) == SIG_ERR) {
+ /*if (signal (SIGINT, signal_handler) == SIG_ERR) {
  fprintf (stderr, "Cannot handle SIGINT!\n");
  syslog(LOG_ERR, "Cannot handle SIGINT");
  exit (EXIT_FAILURE);
- }
+ }*/
  /*
  * Register signal_handler as our signal handler
  * for SIGTERM.
  */
- if (signal (SIGTERM, signal_handler) == SIG_ERR) {
+ /*if (signal (SIGTERM, signal_handler) == SIG_ERR) {
  fprintf (stderr, "Cannot handle SIGTERM!\n");
   syslog(LOG_ERR, "Cannot handle SIGTERM");
  exit (EXIT_FAILURE);
- }
+ }*/
     //length of socket
     socklen_t soclen = sizeof(struct sockaddr);
     //Creation of socket
@@ -125,8 +125,8 @@ int main(int argc, char* argv[])
         syslog(LOG_ERR, "Scoket Creation failed");
         exit(EXIT_FAILURE);
     }
-    int flags = fcntl(sock_fd, F_GETFL, 0);
-    fcntl(sock_fd, F_SETFL, flags | O_NONBLOCK);
+    //int flags = fcntl(sock_fd, F_GETFL, 0);
+    //fcntl(sock_fd, F_SETFL, flags | O_NONBLOCK);
     int sock_accept_fd = 0;
     hints.ai_family = AF_INET;
     hints.ai_flags = AI_PASSIVE;
