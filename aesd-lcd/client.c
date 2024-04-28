@@ -141,7 +141,12 @@ void make_deamon(void)
     		}
     		
     		// change dir to root
-    		chdir("/");
+    		if (chdir("/") < 0)
+            {
+
+                perror("changing directory to root failed\n");
+                exit(-1);
+            }
     		
     		//close fds
 		close(STDIN_FILENO);
