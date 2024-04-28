@@ -48,8 +48,7 @@ Date: April 15, 2024
 #define LCD_D7  14               //Data pin D7
 
 //Variables
-int socket_fd;	//for server 
-int client_fd; 	//for client
+int socket_fd;	//for client 
 volatile sig_atomic_t fatal_error_in_progress = 0;
 pid_t pid;
 bool daemon_flag = false;
@@ -59,7 +58,7 @@ struct sockaddr_in server_address; // connector's address information
 char s[INET6_ADDRSTRLEN];
 
 int status;
-char buffer [BUFFER_LEN];
+float buffer [BUFFER_LEN];
 
 //smooth cleaup and termination 
 void cleanup(void)
@@ -67,8 +66,6 @@ void cleanup(void)
     syslog(LOG_INFO, "cleaning up \n");	
 
 	close(socket_fd);
-	close(client_fd);
-    //unlink(LOG_FILE);
 	shutdown(socket_fd, SHUT_RDWR);
 
 	exit(EXIT_SUCCESS);
@@ -99,7 +96,6 @@ void signal_handler(int signal_type)
 		 */
 			shutdown(socket_fd, SHUT_RDWR);
             close(socket_fd);
-	        close(client_fd);
             syslog(LOG_INFO,"cleaned up\n");
 
 		  /* Now reraise the signal.  We reactivate the signal’s
@@ -142,11 +138,11 @@ void make_deamon(void)
     		
     		// change dir to root
     		if (chdir("/") < 0)
-            {
+            	{
 
                 perror("changing directory to root failed\n");
                 exit(-1);
-            }
+            	}
     		
     		//close fds
 		close(STDIN_FILENO);
@@ -180,7 +176,7 @@ int main(int argc, char *argv[])
 
 
 	//for syslogging throughout
-	openlog("Client Socket:",0,LOG_USER);
+    openlog("Client Socket:",0,LOG_USER);
     syslog(LOG_INFO,"starting socket\n");
 
 	if (argc == 2)
@@ -205,19 +201,23 @@ int main(int argc, char *argv[])
 		syslog(LOG_ERR,"SIGINT handler failed \n");
 		exit (EXIT_FAILURE);
 	}
-        
+    
+    //init wiring pi and lcd   
     wiringPiSetup();        
     lcd = lcdInit (2, 16, 4, LCD_RS, LCD_E, LCD_D4, LCD_D5, LCD_D6, LCD_D7, 0, 0, 0, 0);
     
+    //display initial messages
     lcdPosition(lcd, 2, 1); 
     lcdPuts(lcd, "AESD PROJECT");    
     delay(1000);
-    lcdClear(lcd);  
-	delay(1000);
-	
-	lcdPosition(lcd, 2, 0); 
-	lcdPuts(lcd, "TEMP SYSTEM"); 
-	
+    lcdClear(lcd);
+    delay(1000);
+    lcdPosition(lcd, 2, 0);
+    lcdPuts(lcd, "TEMP SYSTEM"); 
+    
+    /* STEP:
+        open socket
+    */	
     if (open_socket() == -1)
     {
         syslog(LOG_ERR, "open socket failed \n");
@@ -247,27 +247,34 @@ int main(int argc, char *argv[])
         close(socket_fd);
         exit(-1);
     }
-    syslog(LOG_DEBUG, "Connected to %s \n", server_ipaddr);
     printf("Connected to %s \n", server_ipaddr);
-
+    
+    /* STEP:
+        receive temp values from socket server and print on lcd
+    */
     while(1)
     {
+    	//store in a temp buffer
         int bytes_rec = recv(socket_fd, buffer, 1024, 0);
-	buffer[bytes_rec]='\0';
 	
+	//print values from the buffer 
         if (bytes_rec == 0)
-		    printf("data recieved completely\n");
-	    else if(bytes_rec > 0)
+        {
+        	printf("no data\n");
+        }
+	else if(bytes_rec > 0)
         {
             lcdClear(lcd); 
             lcdPosition(lcd, 0, 0); 
-            printf("%s\n",buffer);   
-            lcdPrintf(lcd, "s: %s",buffer);
+	    for (int i = 0; i < (int)(bytes_rec / sizeof(float)); i++)
+            {
+		    printf("%.2f\n", buffer[i]);   
+		    lcdPrintf(lcd, "Temp: %.2f degC", buffer[i]);
+            }
         }
 	}   
            
     cleanup(); //cleanup after end
-    closelog();
     return 0;
 }
 
