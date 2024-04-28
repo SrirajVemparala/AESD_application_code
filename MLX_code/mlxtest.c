@@ -24,6 +24,9 @@
 
 typedef union i2c_smbus_data i2c_data;
 int fdev;
+void i2c_read_data(int , i2c_data* , struct i2c_smbus_ioctl_data*);
+
+
 
 int i2c_init()
 {
@@ -57,17 +60,12 @@ float get_temp_data()
     // trying to read something from the device using SMBus READ request
     i2c_data data;
     char command = 0x07; // command 0x06 is reading thermopile sensor, see datasheet for all commands
-
-    // build request structure
-    struct i2c_smbus_ioctl_data sdat = {
-        .read_write = I2C_SMBUS_READ,
-        .command = command,
-        .size = I2C_SMBUS_WORD_DATA, // Assuming is defined elsewhere
-        .data = &data
-    };
+	struct i2c_smbus_ioctl_data updatedata;
+	i2c_read_data(command,&data,&updatedata);
+	printf("read_complete\n");
     // do actual request
-    if (ioctl(fdev, I2C_SMBUS, &sdat) < 0) {
-        fprintf(stderr, "Failed to perform I2C_SMBUS transaction, error: %s\n", strerror(errno));
+    if (ioctl(fdev, I2C_SMBUS, &updatedata) < 0) {
+        fprintf(stderr, "I2C_SMBUS FAILED, error: %s\n", strerror(errno));
         return -1;
     }
 
@@ -80,3 +78,12 @@ float get_temp_data()
     printf("Tamb = %04.2f\n", temp);
     return temp;
 }
+
+void i2c_read_data(int command, i2c_data* data, struct i2c_smbus_ioctl_data* updatedata)
+{
+	updatedata->read_write = I2C_SMBUS_READ;
+        updatedata->command = command;
+        updatedata->size = I2C_SMBUS_WORD_DATA; // Assuming is defined elsewhere
+        updatedata->data = data;
+}
+
