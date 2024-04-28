@@ -8,13 +8,13 @@ CFLAGS ?= -g -Wall -Wextra
 LIBS ?= -pthread
 
 # Define the source file
-SRC = 	aesd-lcd.c \
+SRC = 	client.c \
 	lcd.c \
 	wiringPi.c \
 
 
 # Define the output executable
-TARGET = aesd-lcd
+TARGET = client
 
 # Default target
 all: $(TARGET)
