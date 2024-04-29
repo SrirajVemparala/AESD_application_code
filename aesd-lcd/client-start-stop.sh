@@ -8,11 +8,10 @@
 case "$1" in
     start)
         echo "Starting aesdsocket client"
-	start-stop-daemon -S -n client -a /usr/bin/client -- -d
+	client
         ;;
     stop)
         echo "Stopping aesdsocket client"
-        start-stop-daemon -K -n client
         ;;
     *)
         echo "Usage: $0 {start|stop}"

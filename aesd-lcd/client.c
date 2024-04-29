@@ -171,7 +171,7 @@ int open_socket()
 //entry point
 int main(int argc, char *argv[])
 {
-    const char *server_ipaddr = "192.168.170.1";
+    const char *server_ipaddr = "192.168.170.2";
     int lcd;     
 
 
